@@ -12,7 +12,7 @@ def main(curr_id):
         lecture_date = f'{int(temp[0])}_{temp[1][:3]}_{temp[2]}'
         
         try:
-            lecture_link = re.findall(r"\bhttps://nus-sg\.zoom\.us[^ ]*", textract.process(f"Zoom meeting_{lecture_date}.docx").decode("utf-8").replace("\n"," "))[0]
+            lecture_link = re.findall(r"\bhttps://nus-sg\.zoom\.[(us)|(cn)][^ ]*", textract.process(f"Zoom meeting_{lecture_date}.docx").decode("utf-8").replace("\n"," "))[0]
             day = curr.strftime('[%d %b] %A')
 
             # Accept typos one day before or after
@@ -27,15 +27,15 @@ def main(curr_id):
             tutorials = {1: "12-1", 2: "1-2", 3: "2-3", 4: "3-4", 5: "4-5"}
             tut = curr - datetime.timedelta(days=1)
 
-            # Check for the next one week
-            while (tut-curr).days <= 7:
+            # Check for the next two weeks (due to recess week)
+            while (tut-curr).days <= 14:
                 tut_temp = tut.strftime("%d %b %Y").split(" ")
                 tut_day = tut.strftime("[%d %b]")
                 tut_date = f'{int(tut_temp[0])}_{tut_temp[1][:3]}_{tut_temp[2]}'
 
                 for i in range(1,6):
                     try:
-                        tut_link = list(filter(lambda x: "pwd" in x, re.findall(r"\bhttps://nus-sg\.zoom\.us[^ ]*", textract.process(f"Zoom meeting_tutorial_{tutorials[i]}_pm_{tut_date}.docx").decode("utf-8").replace("\n"," "))))[0]
+                        tut_link = list(filter(lambda x: "pwd" in x, re.findall(r"\bhttps://nus-sg\.zoom\.[(us)|(cn)][^ ]*", textract.process(f"Zoom meeting_tutorial_{tutorials[i]}_pm_{tut_date}.docx").decode("utf-8").replace("\n"," "))))[0]
                         msg += f"\n\n*{tut_day} Tutorial (Group {i}, {tutorials[i]}PM)*\n{tut_link}"
                     except:
                         pass
